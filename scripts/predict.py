@@ -5,7 +5,7 @@ import joblib
 import pandas as pd
 
 def generate_submission(test_path: str = 'test.csv', sample_sub_path: str = 'sample_submission.csv', model_path: str = 'models/pipeline_model.pkl', output_path: str = 'submissions/submission.csv') -> None:
-    """Membuat file prediksi submission untuk Kaggle.
+    """Membuat file prediksi submission untuk Kaggle dengan format angka (1, 2, 3, dst).
 
     Args:
         test_path (str): Jalur file data test.
@@ -22,6 +22,10 @@ def generate_submission(test_path: str = 'test.csv', sample_sub_path: str = 'sam
     
     print("Melakukan prediksi pada data test...")
     predictions = pipeline.predict(X_test)
+    
+    # Mengubah format prediksi dari "Grade X" menjadi angka (misal: "Grade 3" -> 3)
+    if isinstance(predictions[0], str) and "Grade" in predictions[0]:
+        predictions = [int(p.replace("Grade ", "")) for p in predictions]
     
     submission = sample_sub.copy()
     submission['damage_grade'] = predictions
